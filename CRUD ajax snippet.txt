@@ -1,0 +1,91 @@
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script type="text/javascript" rel="stylesheet">
+    $('document').ready(function() {
+        $(".alert").fadeIn(900).fadeOut(4900);
+    });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+
+        //GET DELETE CALAMITY ID
+        $(function() {
+            $('#delete').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); /*Button that triggered the modal*/
+                var id = button.data('id');
+                var modal = $(this);
+                modal.find('#id_modal').val(id);
+                $("#delete_datas").attr("data-id", id);
+                //modal.find('#delete_datas').val(id);
+            });
+        });
+
+        //GET CALAMITY NAME
+        $(function() {
+            $('#get_calamity').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget); /*Button that triggered the modal*/
+                var id = button.data('id');
+                var name = button.data('calamity_name');
+                var modal = $(this);
+                modal.find('#calamity_modal').val(name);
+                modal.find('#id_modal').val(id);
+            });
+        });
+
+        //UPDATE CALAMITY NAME
+        $(document).on("click", "#update_data", function() 
+        {
+            $.ajax({
+                url: "../admin/calamity-functions/update-calamity.php",
+                type: "POST",
+                cache: false,
+                data: {
+                    id: $('#id_modal').val(),
+                    cal_name: $('#calamity_modal').val(),
+                },
+                success: function(dataResult) {
+                    var dataResult = JSON.parse(dataResult);
+                    console.log(dataResult);
+                    if (dataResult.status == 1) {
+                        $('#get_calamity').modal().hide();
+                        alert('Data Updated Successfully !');
+                        location.reload();
+                    } else {
+                        alert('Data Failed to Update !');
+                        location.reload();
+                    }
+                }
+            });
+        });
+
+        
+        //DELETE CALAMITY NAME
+        $(document).on("click", "#delete_datas", function() { 
+            var $ele = $(this).parent().parent();
+            var ids = $(this).attr("data-id")
+            console.log(ids);
+            $.ajax({
+                url: "../admin/calamity-functions/delete-calamity.php",
+                type: "POST",
+                cache: false,
+                data:{
+                    id: ids
+                },
+                success: function(dataResult){
+                    var dataResult = JSON.parse(dataResult);
+                    $('#delete').modal().hide();
+
+                    if(dataResult.status==1){       
+                        alert('Data Deleted Successfully !');
+                        location.reload();
+                    }else{
+                        alert("Error.");
+                    }
+                }
+            });
+        });
+
+    });
+    </script>
